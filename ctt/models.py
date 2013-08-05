@@ -52,6 +52,7 @@ class CTTModel(models.Model):
             self.move_to(self.parent)
 
     def get_ancestors(self, ascending=False, include_self=False):
+        """Return node ancestors"""
         ancestors = self._cls.objects.filter(tpa__descendant_id=self.id)
         if not include_self:
             ancestors = ancestors.exclude(id=self.id)
@@ -63,26 +64,31 @@ class CTTModel(models.Model):
 
     @filtered_qs
     def get_children(self):
+        """Return node children"""
         nodes = self._cls.objects.filter(
             Q(tpd__ancestor_id=self.id) & Q(tpd__path_len=1)
         )
         return nodes
 
     def get_descendant_count(self):
+        """Return number of descendants"""
         return self.get_descendants().count()
 
     def get_descendants(self, include_self=False):
+        """Return node descendants"""
         nodes = self._cls.objects.filter(tpd__ancestor_id=self.id)
         if not include_self:
             nodes = nodes.exclude(id=self.id)
         return nodes
 
     def get_leafnodes(self, include_self=False):
+        """Return all leafs, which are descendants of node"""
         nodes = self.get_descendants(include_self=include_self)
         nodes = nodes.exclude(tpa__path_len__gt=0)
         return nodes
 
     def get_level(self):
+        """Return tree level"""
         return self.level
 
     def _get_next_from_qs(self, qs):
@@ -96,6 +102,7 @@ class CTTModel(models.Model):
 
     def get_next_sibling(self, **filters):
         """
+        If you want have correct order, you have to use CTTOrderableModel!
         jak chcesz mieć dobrą kolejność to korzystaj z CTTOrderableModel!
         """
         siblings = self.get_siblings(include_self=True).filter(**filters)
@@ -103,12 +110,14 @@ class CTTModel(models.Model):
 
     def get_previous_sibling(self, **filters):
         """
+        If you want have correct order, you have to use CTTOrderableModel!
         jak chcesz mieć dobrą kolejność to korzystaj z CTTOrderableModel!
         """
         siblings = self.get_siblings(include_self=True).filter(**filters)
         return self._get_next_from_qs(siblings.reverse())
 
     def get_siblings(self, include_self=False):
+        """Return node siblings"""
         if not self.parent:
             nodes = self._cls.objects.filter(id=self.id)
         else:
@@ -120,6 +129,7 @@ class CTTModel(models.Model):
         return nodes
 
     def get_root(self):
+        """Return root of tree"""
         return self.tpd.latest('path_len').ancestor
 
     def insert_at(self, target, position='first-child', save=False,
@@ -158,22 +168,27 @@ class CTTModel(models.Model):
 
 
     def is_ancestor_of(self, other, include_self=False):
+        """Check is node ancestor of other node"""
         nodes = other.get_ancestors(include_self=include_self)
         return self in nodes
 
     def is_child_node(self):
+        """Check is node child of other node"""
         return not self.is_root_node()
 
     def is_descendant_of(self, other, include_self=False):
+        """Check is node descendant of other node"""
         nodes = other.get_descendants(include_self=include_self)
         return self in nodes
 
 
     def is_leaf_node(self):
+        """Return True if node is leaf"""
         return self._cls.objects.filter(
             tpd__ancestor_id=self.id).count() == 1
 
     def is_root_node(self):
+        """Return True if node is root"""
         return self.level == 0
 
     def _get_unique_ancestors(self, target, others=False, include_self=False,
@@ -215,6 +230,7 @@ class CTTModel(models.Model):
         return uni_ancestors
 
     def move_to(self, target, position='first-child'):
+        """Move node to target, target become parent of moved node."""
         if self in target.get_ancestors(include_self=True):
             raise ValueError(_('Cannot move node to its descendant or itself.'))
 
@@ -294,6 +310,7 @@ class CTTOrderableModel(CTTModel):
         ordering = ('order',)
 
     def get_next_sibling(self, **filters):
+        """Return next sibling of node"""
         siblings = self.get_siblings().filter(**filters)
         ret_node = siblings.filter(order__gt=self.order)
         if not ret_node:
@@ -301,6 +318,7 @@ class CTTOrderableModel(CTTModel):
         return ret_node[0]
 
     def get_previous_sibling(self, **filters):
+        """Return previous sibling of node"""
         siblings = self.get_siblings().filter(**filters)
         ret_node = siblings.filter(order__lt=self.order).reverse()
         if not ret_node:
@@ -308,9 +326,11 @@ class CTTOrderableModel(CTTModel):
         return ret_node[0]
 
     def get_children(self):
+        """Return node children"""
         return super(CTTOrderableModel, self).get_children().order_by('order')
 
     def get_siblings(self, include_self=False):
+        """Return node siblings"""
         return super(CTTOrderableModel, self).get_siblings(
             include_self).order_by('order')
 
@@ -330,6 +350,7 @@ class CTTOrderableModel(CTTModel):
         self.save()
 
     def move_before(self, sibling):
+        """Move before sibling"""
         before = self.get_siblings().filter(order__lt=sibling.order).\
         order_by('-order')
         if before.exists():
@@ -338,6 +359,7 @@ class CTTOrderableModel(CTTModel):
             self.order = sibling.order - self._interval
 
     def move_after(self, sibling):
+        """Move after sibling"""
         self.order = sibling.order + 1
 
     def _fix_order(self):
