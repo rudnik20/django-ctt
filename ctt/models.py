@@ -363,7 +363,11 @@ class CTTOrderableModel(CTTModel):
         ordering = ('order',)
 
     def get_next_sibling(self, **filters):
-        """Return next sibling of node"""
+        """ Return next sibling of node
+
+        :param filters: extra query parameters
+        :return: node object or None
+        """
         siblings = self.get_siblings().filter(**filters)
         ret_node = siblings.filter(order__gt=self.order)
         if not ret_node:
@@ -371,7 +375,11 @@ class CTTOrderableModel(CTTModel):
         return ret_node[0]
 
     def get_previous_sibling(self, **filters):
-        """Return previous sibling of node"""
+        """Return previous sibling of node
+
+        :param filters: extra query parameters
+        :return: node object or None
+        """
         siblings = self.get_siblings().filter(**filters)
         ret_node = siblings.filter(order__lt=self.order).reverse()
         if not ret_node:
@@ -379,11 +387,17 @@ class CTTOrderableModel(CTTModel):
         return ret_node[0]
 
     def get_children(self):
-        """Return node children"""
+        """ Return node children
+
+        :return: node object
+        """
         return super(CTTOrderableModel, self).get_children().order_by('order')
 
     def get_siblings(self, include_self=False):
-        """Return node siblings"""
+        """Return node siblings
+
+        :return: node object
+        """
         return super(CTTOrderableModel, self).get_siblings(
             include_self).order_by('order')
 
@@ -403,7 +417,7 @@ class CTTOrderableModel(CTTModel):
         self.save()
 
     def move_before(self, sibling):
-        """Move before sibling"""
+        """ Move before sibling"""
         before = self.get_siblings().filter(order__lt=sibling.order).\
         order_by('-order')
         if before.exists():
