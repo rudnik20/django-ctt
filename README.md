@@ -38,7 +38,7 @@ Finally run `python manage.py syncdb` to create necessary tables.
 Now you have extra methods in your model objects e.g. `get_children()` and `get_ancestors()`.
 Your register model has 2 extra fields: parent and level.
 
-###Exaple:
+###Example:
 
 `
 class Node(CTTModel):
