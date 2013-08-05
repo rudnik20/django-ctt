@@ -52,7 +52,13 @@ class CTTModel(models.Model):
             self.move_to(self.parent)
 
     def get_ancestors(self, ascending=False, include_self=False):
-        """Return node ancestors"""
+        """Return node ancestors
+
+        :param ascending: enable reverse order_by
+        :param include_self: if true, put node to his ancestors
+        :return: QuerySet of nodes
+        """
+
         ancestors = self._cls.objects.filter(tpa__descendant_id=self.id)
         if not include_self:
             ancestors = ancestors.exclude(id=self.id)
@@ -64,31 +70,48 @@ class CTTModel(models.Model):
 
     @filtered_qs
     def get_children(self):
-        """Return node children"""
+        """ Return node children
+
+        :return: QuerySet of nodes
+        """
         nodes = self._cls.objects.filter(
             Q(tpd__ancestor_id=self.id) & Q(tpd__path_len=1)
         )
         return nodes
 
     def get_descendant_count(self):
-        """Return number of descendants"""
+        """ Return number of descendants
+
+        :return: integer
+        """
         return self.get_descendants().count()
 
     def get_descendants(self, include_self=False):
-        """Return node descendants"""
+        """ Return node descendants
+
+        :param include_self: if true, put node to his descendants
+        :return: QuerySet of nodes
+        """
         nodes = self._cls.objects.filter(tpd__ancestor_id=self.id)
         if not include_self:
             nodes = nodes.exclude(id=self.id)
         return nodes
 
     def get_leafnodes(self, include_self=False):
-        """Return all leafs, which are descendants of node"""
+        """ Return all leafs, which are descendants of node
+
+        :param include_self: if true, return node if is leaf
+        :return: QuerySet of nodes
+        """
         nodes = self.get_descendants(include_self=include_self)
         nodes = nodes.exclude(tpa__path_len__gt=0)
         return nodes
 
     def get_level(self):
-        """Return tree level"""
+        """ Return tree level
+
+        :return: integer
+        """
         return self.level
 
     def _get_next_from_qs(self, qs):
@@ -101,23 +124,31 @@ class CTTModel(models.Model):
         return None
 
     def get_next_sibling(self, **filters):
-        """
+        """ Return next sibling
         If you want have correct order, you have to use CTTOrderableModel!
-        jak chcesz mieć dobrą kolejność to korzystaj z CTTOrderableModel!
+
+        :param filters: extra query parameters
+        :return: node object
         """
         siblings = self.get_siblings(include_self=True).filter(**filters)
         return self._get_next_from_qs(siblings)
 
     def get_previous_sibling(self, **filters):
-        """
+        """ Return previous sibling
         If you want have correct order, you have to use CTTOrderableModel!
-        jak chcesz mieć dobrą kolejność to korzystaj z CTTOrderableModel!
+
+        :param filters: extra query parameters
+        :return: node object
         """
         siblings = self.get_siblings(include_self=True).filter(**filters)
         return self._get_next_from_qs(siblings.reverse())
 
     def get_siblings(self, include_self=False):
-        """Return node siblings"""
+        """ Return node siblings
+
+        :param include_self: if true, put node to his siblings
+        :return: QuerySet of Nodes
+        """
         if not self.parent:
             nodes = self._cls.objects.filter(id=self.id)
         else:
@@ -129,13 +160,21 @@ class CTTModel(models.Model):
         return nodes
 
     def get_root(self):
-        """Return root of tree"""
+        """ Return root of tree
+
+        :return: node object
+        """
         return self.tpd.latest('path_len').ancestor
 
     def insert_at(self, target, position='first-child', save=False,
                   allow_existing_pk=False):
-        """
+        """ Insert node at target
         manager.insert_node
+
+        :param target: node which will become parent for this node
+        :param position: which child position
+        :param save: if true, changes are save
+        :param allow_existing_pk: this allow to use existing primary key
         """
         if not self.pk:
             self.save()
@@ -168,16 +207,27 @@ class CTTModel(models.Model):
 
 
     def is_ancestor_of(self, other, include_self=False):
-        """Check is node ancestor of other node"""
+        """Check is node ancestor of other node
+
+        :param other: supposed descendant
+        :param include_self:
+        :return: True or False
+        """
         nodes = other.get_ancestors(include_self=include_self)
         return self in nodes
 
     def is_child_node(self):
-        """Check is node child of other node"""
+        """ Check is node child of other node
+        :return: True or False
+        """
         return not self.is_root_node()
 
     def is_descendant_of(self, other, include_self=False):
-        """Check is node descendant of other node"""
+        """ Check is node descendant of other node
+        :param other: supposed ancestor
+        :param include_self:
+        :return: True or False
+        """
         nodes = other.get_descendants(include_self=include_self)
         return self in nodes
 
@@ -230,7 +280,10 @@ class CTTModel(models.Model):
         return uni_ancestors
 
     def move_to(self, target, position='first-child'):
-        """Move node to target, target become parent of moved node."""
+        """ Move node to target, target become parent of moved node.
+        :param target: node which will become parent for this node
+        :param position:
+        """
         if self in target.get_ancestors(include_self=True):
             raise ValueError(_('Cannot move node to its descendant or itself.'))
 
