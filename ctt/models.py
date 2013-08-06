@@ -13,6 +13,7 @@ from django.utils.translation import ugettext as _
 
 
 class CTTModel(models.Model):
+    """This class provide create tree from your model objects"""
     parent = models.ForeignKey('self', null=True, blank=True)
     level = models.IntegerField(default=0, blank=True)
     _tpm = None # overwrite by core.register()
@@ -354,6 +355,7 @@ class CTTModel(models.Model):
 
 
 class CTTOrderableModel(CTTModel):
+    """This is subclass of CTTModel which keep correct elements order"""
     order = models.IntegerField(verbose_name=_(u"order"))
     _interval = 10
 
