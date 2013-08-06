@@ -31,6 +31,8 @@ In your models.py file put:
     import ctt
     from ctt.models import CTTModel
 
+Your model must inherit CTTModel.
+
 You must register your model (models.py):
 
 .. code-block:: python
