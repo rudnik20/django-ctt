@@ -33,7 +33,9 @@ class CTTModel(models.Model):
         return unicode(self.id)
 
     def save(self, force_insert=False, force_update=False, using=None):
-        """Save data to database"""
+        """Save data to database
+        :return: None
+        """
         is_new = self.pk is None
         if not is_new:
             old_parent = self._cls.objects.get(pk=self.pk).parent
@@ -181,6 +183,7 @@ class CTTModel(models.Model):
         :param position: which child position
         :param save: if true, changes are save
         :param allow_existing_pk: this allow to use existing primary key
+        :return: None
         """
         if not self.pk:
             self.save()
@@ -236,12 +239,16 @@ class CTTModel(models.Model):
         return self in nodes
 
     def is_leaf_node(self):
-        """Return True if node is leaf"""
+        """Return True if node is leaf
+        :return: True or False
+        """
         return self._cls.objects.filter(
             tpd__ancestor_id=self.id).count() == 1
 
     def is_root_node(self):
-        """Return True if node is root"""
+        """Return True if node is root
+        :return: True or False
+        """
         return self.level == 0
 
     def _get_unique_ancestors(self, target, others=False, include_self=False,
@@ -288,6 +295,7 @@ class CTTModel(models.Model):
         """ Move node to target, target become parent of moved node.
 
         :param target: node which will become parent for this node
+        :return: None
         """
         if self in target.get_ancestors(include_self=True):
             raise ValueError(_('Cannot move node to its descendant or itself.'))
@@ -308,6 +316,7 @@ class CTTModel(models.Model):
     def _rebuild_tree(cls):
         """
         little clever but certain :)
+        :return: None
         """
         cls._tpm.objects.all().delete()
         for node in cls._cls.objects.all().order_by('level'):
@@ -319,6 +328,7 @@ class CTTModel(models.Model):
         Rebuid all paths cross qs, very slow, use _rebuild_tree only if you
         know what do you do
         :param qs: QuerySet of Nodes
+        :return: None
         """
 
         def item_descendants(item, result=None):
@@ -407,13 +417,16 @@ class CTTOrderableModel(CTTModel):
             include_self).order_by('order')
 
     def save(self, force_insert=False, force_update=False, using=None):
-        """Save data to database"""
+        """Save data to database
+        :return: None
+        """
         self._fix_order()
         super(CTTOrderableModel, self).save(force_insert, force_update, using)
 
     def _push_forward(self, from_pos):
         """ Push forward node from position
         :param from_pos: position from push
+        :return: None
         """
         new_order = from_pos + self._interval
         siblings = self.get_siblings()
@@ -428,6 +441,7 @@ class CTTOrderableModel(CTTModel):
     def move_before(self, sibling):
         """ Move before sibling
         :param sibling: node which is sibling for self
+        :return: None
         """
         before = self.get_siblings().filter(order__lt=sibling.order).\
         order_by('-order')
@@ -439,6 +453,7 @@ class CTTOrderableModel(CTTModel):
     def move_after(self, sibling):
         """Move after sibling
         :param sibling: node which is sibling for self
+        :return: None
         """
         self.order = sibling.order + 1
 
