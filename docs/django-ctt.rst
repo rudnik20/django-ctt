@@ -39,7 +39,13 @@ You must register your model (models.py):
 
     ctt.register(your_model_name)
 
-Finally run python manage.py syncdb to create necessary tables.
+Finally run
+
+.. code-block:: console
+
+    python manage.py syncdb
+
+to create necessary tables.
 
 Now you have extra methods in your model objects e.g. `get_children()` and `get_ancestors()`.
 Your register model has 2 extra fields: parent and level.
