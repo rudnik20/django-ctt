@@ -48,13 +48,15 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="the-api-documentation">
-<h1>The API documentation<a class="headerlink" href="#the-api-documentation" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-ctt.models"></span><p>Closure Tables Tree models.</p>
+  <div class="section" id="module-ctt.models">
+<span id="the-api-documentation"></span><h1>The API documentation<a class="headerlink" href="#module-ctt.models" title="Permalink to this headline">¶</a></h1>
+<p>Closure Tables Tree models.</p>
 <dl class="class">
 <dt id="ctt.models.CTTModel">
 <em class="property">class </em><tt class="descclassname">ctt.models.</tt><tt class="descname">CTTModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class provide create tree from your model objects</p>
+<dd><p>This class provide create tree from your model objects
+You must inherit this and register your subclass to use it:
+ctt.register(your_model_name)</p>
 <dl class="method">
 <dt id="ctt.models.CTTModel.get_ancestors">
 <tt class="descname">get_ancestors</tt><big>(</big><em>ascending=False</em>, <em>include_self=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_ancestors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_ancestors" title="Permalink to this definition">¶</a></dt>
@@ -223,12 +225,15 @@ manager.insert_node</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>target</strong> &#8211; node which will become parent for this node</li>
 <li><strong>position</strong> &#8211; which child position</li>
 <li><strong>save</strong> &#8211; if true, changes are save</li>
 <li><strong>allow_existing_pk</strong> &#8211; this allow to use existing primary key</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -254,29 +259,64 @@ manager.insert_node</p>
 <dl class="method">
 <dt id="ctt.models.CTTModel.is_child_node">
 <tt class="descname">is_child_node</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.is_child_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.is_child_node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check is node child of other node
-:return: True or False</p>
+<dd><p>Check is node child of other node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True or False</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="ctt.models.CTTModel.is_descendant_of">
 <tt class="descname">is_descendant_of</tt><big>(</big><em>other</em>, <em>include_self=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.is_descendant_of"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.is_descendant_of" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check is node descendant of other node
-:param other: supposed ancestor
-:param include_self:
-:return: True or False</p>
+<dd><p>Check is node descendant of other node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>other</strong> &#8211; supposed ancestor</li>
+<li><strong>include_self</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True or False</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="ctt.models.CTTModel.is_leaf_node">
 <tt class="descname">is_leaf_node</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.is_leaf_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.is_leaf_node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return True if node is leaf</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True or False</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="ctt.models.CTTModel.is_root_node">
 <tt class="descname">is_root_node</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.is_root_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.is_root_node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return True if node is root</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True or False</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -289,6 +329,8 @@ manager.insert_node</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>target</strong> &#8211; node which will become parent for this node</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -297,6 +339,14 @@ manager.insert_node</p>
 <dt id="ctt.models.CTTModel.save">
 <tt class="descname">save</tt><big>(</big><em>force_insert=False</em>, <em>force_update=False</em>, <em>using=None</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save data to database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -304,7 +354,9 @@ manager.insert_node</p>
 <dl class="class">
 <dt id="ctt.models.CTTOrderableModel">
 <em class="property">class </em><tt class="descclassname">ctt.models.</tt><tt class="descname">CTTOrderableModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is subclass of CTTModel which keep correct elements order</p>
+<dd><p>This is subclass of CTTModel which keep correct elements order
+You must inherit this and register your subclass to use it:
+ctt.register(your_model_name)</p>
 <dl class="method">
 <dt id="ctt.models.CTTOrderableModel.get_children">
 <tt class="descname">get_children</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.get_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.get_children" title="Permalink to this definition">¶</a></dt>
@@ -369,18 +421,46 @@ manager.insert_node</p>
 <dt id="ctt.models.CTTOrderableModel.move_after">
 <tt class="descname">move_after</tt><big>(</big><em>sibling</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.move_after"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.move_after" title="Permalink to this definition">¶</a></dt>
 <dd><p>Move after sibling</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sibling</strong> &#8211; node which is sibling for self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="ctt.models.CTTOrderableModel.move_before">
 <tt class="descname">move_before</tt><big>(</big><em>sibling</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.move_before"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.move_before" title="Permalink to this definition">¶</a></dt>
 <dd><p>Move before sibling</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sibling</strong> &#8211; node which is sibling for self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="ctt.models.CTTOrderableModel.save">
 <tt class="descname">save</tt><big>(</big><em>force_insert=False</em>, <em>force_update=False</em>, <em>using=None</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save data to database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

@@ -75,11 +75,16 @@ This is very simple, friendly and reusable app.</p>
 <span class="kn">from</span> <span class="nn">ctt.models</span> <span class="kn">import</span> <span class="n">CTTModel</span>
 </pre></div>
 </div>
+<p>Your model must inherit CTTModel.</p>
 <p>You must register your model (models.py):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">ctt</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">your_model_name</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Finally run python manage.py syncdb to create necessary tables.</p>
+<p>Finally run</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">python manage.py syncdb</span>
+</pre></div>
+</div>
+<p>to create necessary tables.</p>
 <p>Now you have extra methods in your model objects e.g. <cite>get_children()</cite> and <cite>get_ancestors()</cite>.
 Your register model has 2 extra fields: parent and level.</p>
 <div class="section" id="example">

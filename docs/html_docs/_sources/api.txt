@@ -1,5 +1,5 @@
 The API documentation
-==========
+==========================
 
 .. automodule:: ctt.models
 .. autoclass:: CTTModel
