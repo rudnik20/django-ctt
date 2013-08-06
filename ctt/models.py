@@ -305,9 +305,7 @@ class CTTModel(models.Model):
     @classmethod
     def _rebuild_tree(cls):
         """
-        mało sprytne, ale pewne :)
-        :param cls:
-        :return:
+        little clever but certain :)
         """
         cls._tpm.objects.all().delete()
         for node in cls._cls.objects.all().order_by('level'):
@@ -316,8 +314,8 @@ class CTTModel(models.Model):
     @classmethod
     def _rebuild_qs(cls, qs):
         """
-        Przebudowuje wszystkie ścieżki przechodzące przez qs, powolne,
-        używaj _rebuild_tree chyba że wiesz co robisz.
+        Rebuid all paths cross qs, very slow, use _rebuild_tree only if you
+        know what do you do
         """
 
         def item_descendants(item, result=None):
