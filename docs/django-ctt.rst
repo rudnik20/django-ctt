@@ -1,15 +1,15 @@
-=============
+================================
 Getting started with django-ctt
-=============
+================================
 
 What it Django-ctt?
-===========
+====================
 
 Django-ctt is Django app, which help you store hierarchical data in database.
 This is very simple, friendly and reusable app.
 
 Installation
-========
+=============
 
 To install django-ctt clone repository:
 
@@ -22,7 +22,7 @@ Next run:
     python setup.py install
 
 Usage
-=====
+===========
 
 In your models.py file put:
 
@@ -45,7 +45,7 @@ Now you have extra methods in your model objects e.g. `get_children()` and `get_
 Your register model has 2 extra fields: parent and level.
 
 Example
-~~~~~~
+~~~~~~~~~~~~
 
 .. code-block:: python
 
