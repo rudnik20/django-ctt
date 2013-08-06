@@ -210,7 +210,6 @@ class CTTModel(models.Model):
         """Check is node ancestor of other node
 
         :param other: supposed descendant
-        :param include_self:
         :return: True or False
         """
         nodes = other.get_ancestors(include_self=include_self)
@@ -281,8 +280,8 @@ class CTTModel(models.Model):
 
     def move_to(self, target, position='first-child'):
         """ Move node to target, target become parent of moved node.
+
         :param target: node which will become parent for this node
-        :param position:
         """
         if self in target.get_ancestors(include_self=True):
             raise ValueError(_('Cannot move node to its descendant or itself.'))
