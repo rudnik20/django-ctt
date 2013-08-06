@@ -1,0 +1,441 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The API documentation &mdash; django-ctt 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="django-ctt 0.1 documentation" href="index.html" />
+    <link rel="prev" title="Getting started with django-ctt" href="django-ctt.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="django-ctt.html" title="Getting started with django-ctt"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">django-ctt 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-api-documentation">
+<h1>The API documentation<a class="headerlink" href="#the-api-documentation" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-ctt.models"></span><p>Closure Tables Tree models.</p>
+<dl class="class">
+<dt id="ctt.models.CTTModel">
+<em class="property">class </em><tt class="descclassname">ctt.models.</tt><tt class="descname">CTTModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class provide create tree from your model objects</p>
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_ancestors">
+<tt class="descname">get_ancestors</tt><big>(</big><em>ascending=False</em>, <em>include_self=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_ancestors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_ancestors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return node ancestors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ascending</strong> &#8211; enable reverse order_by</li>
+<li><strong>include_self</strong> &#8211; if true, put node to his ancestors</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">QuerySet of nodes</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_children">
+<tt class="descname">get_children</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return node children</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">QuerySet of nodes</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_descendant_count">
+<tt class="descname">get_descendant_count</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_descendant_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_descendant_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return number of descendants</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_descendants">
+<tt class="descname">get_descendants</tt><big>(</big><em>include_self=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_descendants"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_descendants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return node descendants</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>include_self</strong> &#8211; if true, put node to his descendants</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">QuerySet of nodes</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_leafnodes">
+<tt class="descname">get_leafnodes</tt><big>(</big><em>include_self=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_leafnodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_leafnodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all leafs, which are descendants of node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>include_self</strong> &#8211; if true, return node if is leaf</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">QuerySet of nodes</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_level">
+<tt class="descname">get_level</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return tree level</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_next_sibling">
+<tt class="descname">get_next_sibling</tt><big>(</big><em>**filters</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_next_sibling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_next_sibling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return next sibling
+If you want have correct order, you have to use CTTOrderableModel!</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filters</strong> &#8211; extra query parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">node object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_previous_sibling">
+<tt class="descname">get_previous_sibling</tt><big>(</big><em>**filters</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_previous_sibling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_previous_sibling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return previous sibling
+If you want have correct order, you have to use CTTOrderableModel!</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filters</strong> &#8211; extra query parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">node object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_root">
+<tt class="descname">get_root</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return root of tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">node object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.get_siblings">
+<tt class="descname">get_siblings</tt><big>(</big><em>include_self=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.get_siblings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.get_siblings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return node siblings</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>include_self</strong> &#8211; if true, put node to his siblings</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">QuerySet of Nodes</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.insert_at">
+<tt class="descname">insert_at</tt><big>(</big><em>target</em>, <em>position='first-child'</em>, <em>save=False</em>, <em>allow_existing_pk=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.insert_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.insert_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert node at target
+manager.insert_node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>target</strong> &#8211; node which will become parent for this node</li>
+<li><strong>position</strong> &#8211; which child position</li>
+<li><strong>save</strong> &#8211; if true, changes are save</li>
+<li><strong>allow_existing_pk</strong> &#8211; this allow to use existing primary key</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.is_ancestor_of">
+<tt class="descname">is_ancestor_of</tt><big>(</big><em>other</em>, <em>include_self=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.is_ancestor_of"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.is_ancestor_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check is node ancestor of other node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> &#8211; supposed descendant</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True or False</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.is_child_node">
+<tt class="descname">is_child_node</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.is_child_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.is_child_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check is node child of other node
+:return: True or False</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.is_descendant_of">
+<tt class="descname">is_descendant_of</tt><big>(</big><em>other</em>, <em>include_self=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.is_descendant_of"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.is_descendant_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check is node descendant of other node
+:param other: supposed ancestor
+:param include_self:
+:return: True or False</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.is_leaf_node">
+<tt class="descname">is_leaf_node</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.is_leaf_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.is_leaf_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if node is leaf</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.is_root_node">
+<tt class="descname">is_root_node</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.is_root_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.is_root_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if node is root</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.move_to">
+<tt class="descname">move_to</tt><big>(</big><em>target</em>, <em>position='first-child'</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.move_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.move_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move node to target, target become parent of moved node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>target</strong> &#8211; node which will become parent for this node</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTModel.save">
+<tt class="descname">save</tt><big>(</big><em>force_insert=False</em>, <em>force_update=False</em>, <em>using=None</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTModel.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save data to database</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ctt.models.CTTOrderableModel">
+<em class="property">class </em><tt class="descclassname">ctt.models.</tt><tt class="descname">CTTOrderableModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is subclass of CTTModel which keep correct elements order</p>
+<dl class="method">
+<dt id="ctt.models.CTTOrderableModel.get_children">
+<tt class="descname">get_children</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.get_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.get_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return node children</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">node object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTOrderableModel.get_next_sibling">
+<tt class="descname">get_next_sibling</tt><big>(</big><em>**filters</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.get_next_sibling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.get_next_sibling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return next sibling of node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filters</strong> &#8211; extra query parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">node object or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTOrderableModel.get_previous_sibling">
+<tt class="descname">get_previous_sibling</tt><big>(</big><em>**filters</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.get_previous_sibling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.get_previous_sibling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return previous sibling of node</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filters</strong> &#8211; extra query parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">node object or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTOrderableModel.get_siblings">
+<tt class="descname">get_siblings</tt><big>(</big><em>include_self=False</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.get_siblings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.get_siblings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return node siblings</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">node object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTOrderableModel.move_after">
+<tt class="descname">move_after</tt><big>(</big><em>sibling</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.move_after"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.move_after" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move after sibling</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTOrderableModel.move_before">
+<tt class="descname">move_before</tt><big>(</big><em>sibling</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.move_before"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.move_before" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move before sibling</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ctt.models.CTTOrderableModel.save">
+<tt class="descname">save</tt><big>(</big><em>force_insert=False</em>, <em>force_update=False</em>, <em>using=None</em><big>)</big><a class="reference internal" href="_modules/ctt/models.html#CTTOrderableModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ctt.models.CTTOrderableModel.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save data to database</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="django-ctt.html"
+                        title="previous chapter">Getting started with django-ctt</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="django-ctt.html" title="Getting started with django-ctt"
+             >previous</a> |</li>
+        <li><a href="index.html">django-ctt 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, HIDDENDATA.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ctt.models &mdash; django-ctt 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="django-ctt 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">django-ctt 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for ctt.models</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c">#-*- coding: utf-8 -*-</span>
+<span class="c">#vim: set ts=4 sw=4 et fdm=marker : */</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Closure Tables Tree models.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.db.models.query_utils</span> <span class="kn">import</span> <span class="n">Q</span>
+<span class="kn">from</span> <span class="nn">ctt.decorators</span> <span class="kn">import</span> <span class="n">filtered_qs</span>
+<span class="kn">from</span> <span class="nn">django.utils.translation</span> <span class="kn">import</span> <span class="n">ugettext</span> <span class="k">as</span> <span class="n">_</span>
+
+
+<div class="viewcode-block" id="CTTModel"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel">[docs]</a><span class="k">class</span> <span class="nc">CTTModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s">&#39;self&#39;</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_tpm</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># overwrite by core.register()</span>
+    <span class="n">tpd</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># overwrite by core.register()</span>
+    <span class="n">tpa</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># overwrite by core.register()</span>
+    <span class="n">_cls</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">class</span> <span class="nc">CTTMeta</span><span class="p">:</span>
+        <span class="n">parent_field</span> <span class="o">=</span> <span class="s">&#39;parent&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CTTModel.save"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_insert</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">force_update</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">using</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">is_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span> <span class="ow">is</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_new</span><span class="p">:</span>
+            <span class="n">old_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">old_parent</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CTTModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">force_insert</span><span class="p">,</span> <span class="n">force_update</span><span class="p">,</span> <span class="n">using</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_new</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">insert_at</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">allow_existing_pk</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">old_parent</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">old_parent</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">move_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">old_parent</span><span class="o">.</span><span class="n">pk</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">pk</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">move_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CTTModel.get_ancestors"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_ancestors">[docs]</a>    <span class="k">def</span> <span class="nf">get_ancestors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">ancestors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">tpa__descendant_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_self</span><span class="p">:</span>
+            <span class="n">ancestors</span> <span class="o">=</span> <span class="n">ancestors</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ascending</span><span class="p">:</span>
+            <span class="n">ancestors</span> <span class="o">=</span> <span class="n">ancestors</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;tpa__path_len&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ancestors</span> <span class="o">=</span> <span class="n">ancestors</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;-tpa__path_len&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ancestors</span>
+</div>
+    <span class="nd">@filtered_qs</span>
+<div class="viewcode-block" id="CTTModel.get_children"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_children">[docs]</a>    <span class="k">def</span> <span class="nf">get_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Q</span><span class="p">(</span><span class="n">tpd__ancestor_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">Q</span><span class="p">(</span><span class="n">tpd__path_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">nodes</span>
+</div>
+<div class="viewcode-block" id="CTTModel.get_descendant_count"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_descendant_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_descendant_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_descendants</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CTTModel.get_descendants"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_descendants">[docs]</a>    <span class="k">def</span> <span class="nf">get_descendants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">tpd__ancestor_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_self</span><span class="p">:</span>
+            <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nodes</span>
+</div>
+<div class="viewcode-block" id="CTTModel.get_leafnodes"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_leafnodes">[docs]</a>    <span class="k">def</span> <span class="nf">get_leafnodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_descendants</span><span class="p">(</span><span class="n">include_self</span><span class="o">=</span><span class="n">include_self</span><span class="p">)</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">tpa__path_len__gt</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nodes</span>
+</div>
+<div class="viewcode-block" id="CTTModel.get_level"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_level">[docs]</a>    <span class="k">def</span> <span class="nf">get_level</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span>
+</div>
+    <span class="k">def</span> <span class="nf">_get_next_from_qs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qs</span><span class="p">):</span>
+        <span class="n">take</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">take</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">item</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">take</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="CTTModel.get_next_sibling"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_next_sibling">[docs]</a>    <span class="k">def</span> <span class="nf">get_next_sibling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        jak chcesz mieć dobrą kolejność to korzystaj z CTTOrderableModel!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">siblings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">(</span><span class="n">include_self</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">**</span><span class="n">filters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_next_from_qs</span><span class="p">(</span><span class="n">siblings</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CTTModel.get_previous_sibling"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_previous_sibling">[docs]</a>    <span class="k">def</span> <span class="nf">get_previous_sibling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        jak chcesz mieć dobrą kolejność to korzystaj z CTTOrderableModel!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">siblings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">(</span><span class="n">include_self</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">**</span><span class="n">filters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_next_from_qs</span><span class="p">(</span><span class="n">siblings</span><span class="o">.</span><span class="n">reverse</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="CTTModel.get_siblings"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_siblings">[docs]</a>    <span class="k">def</span> <span class="nf">get_siblings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+            <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">Q</span><span class="p">(</span><span class="n">tpd__ancestor_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_id</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">Q</span><span class="p">(</span><span class="n">tpd__path_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_self</span><span class="p">:</span>
+            <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nodes</span>
+</div>
+<div class="viewcode-block" id="CTTModel.get_root"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.get_root">[docs]</a>    <span class="k">def</span> <span class="nf">get_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpd</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="s">&#39;path_len&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">ancestor</span>
+</div>
+<div class="viewcode-block" id="CTTModel.insert_at"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.insert_at">[docs]</a>    <span class="k">def</span> <span class="nf">insert_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s">&#39;first-child&#39;</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                  <span class="n">allow_existing_pk</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        manager.insert_node</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_existing_pk</span> <span class="ow">and</span>\
+           <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">_</span><span class="p">(</span><span class="s">&#39;Cannot insert a node which has already been saved.&#39;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">target</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">target</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_ancestors</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                <span class="n">include_self</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tree_paths</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_tpm</span><span class="p">(</span><span class="n">ancestor_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">descendant_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">path_len</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="p">]</span>
+        <span class="n">path_len</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+            <span class="n">tree_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_tpm</span><span class="p">(</span><span class="n">ancestor_id</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">descendant_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                    <span class="n">path_len</span><span class="o">=</span><span class="n">path_len</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">path_len</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tpm</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span><span class="n">tree_paths</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="CTTModel.is_ancestor_of"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.is_ancestor_of">[docs]</a>    <span class="k">def</span> <span class="nf">is_ancestor_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">get_ancestors</span><span class="p">(</span><span class="n">include_self</span><span class="o">=</span><span class="n">include_self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">nodes</span>
+</div>
+<div class="viewcode-block" id="CTTModel.is_child_node"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.is_child_node">[docs]</a>    <span class="k">def</span> <span class="nf">is_child_node</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_root_node</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CTTModel.is_descendant_of"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.is_descendant_of">[docs]</a>    <span class="k">def</span> <span class="nf">is_descendant_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">get_descendants</span><span class="p">(</span><span class="n">include_self</span><span class="o">=</span><span class="n">include_self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">nodes</span>
+
+</div>
+<div class="viewcode-block" id="CTTModel.is_leaf_node"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.is_leaf_node">[docs]</a>    <span class="k">def</span> <span class="nf">is_leaf_node</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">tpd__ancestor_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="CTTModel.is_root_node"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.is_root_node">[docs]</a>    <span class="k">def</span> <span class="nf">is_root_node</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">==</span> <span class="mi">0</span>
+</div>
+    <span class="k">def</span> <span class="nf">_get_unique_ancestors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">others</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                              <span class="n">include_target</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            1</span>
+<span class="sd">           / \</span>
+<span class="sd">          2   5</span>
+<span class="sd">         / \   \</span>
+<span class="sd">        3   4   6</span>
+
+<span class="sd">        3._get_unique_ancestors(6) = 2</span>
+<span class="sd">        3._get_unique_ancestors(6, True) = 5</span>
+
+<span class="sd">        ! include_target zadziała tylko dla others=True</span>
+<span class="sd">        ! include_self zadziała tylko dla others=False</span>
+
+<span class="sd">        pozniej to opisze jakos...</span>
+<span class="sd">        :param others:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#        ancestors = self._cls.objects.filter(tpa__descendant_id=self.id)</span>
+        <span class="k">if</span> <span class="n">others</span><span class="p">:</span>
+            <span class="n">uni_ancestors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">Q</span><span class="p">(</span><span class="n">tpa__descendant_id</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="o">&amp;</span>
+                <span class="o">~</span><span class="n">Q</span><span class="p">(</span><span class="n">tpa__descendant_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">uni_ancestors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">Q</span><span class="p">(</span><span class="n">tpa__descendant_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="o">&amp;</span>
+                <span class="o">~</span><span class="n">Q</span><span class="p">(</span><span class="n">tpa__descendant_id</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_self</span><span class="p">:</span>
+            <span class="n">uni_ancestors</span> <span class="o">=</span> <span class="n">uni_ancestors</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_target</span><span class="p">:</span>
+            <span class="n">uni_ancestors</span> <span class="o">=</span> <span class="n">uni_ancestors</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">uni_ancestors</span>
+
+<div class="viewcode-block" id="CTTModel.move_to"><a class="viewcode-back" href="../../api.html#ctt.models.CTTModel.move_to">[docs]</a>    <span class="k">def</span> <span class="nf">move_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s">&#39;first-child&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">get_ancestors</span><span class="p">(</span><span class="n">include_self</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">_</span><span class="p">(</span><span class="s">&#39;Cannot move node to its descendant or itself.&#39;</span><span class="p">))</span>
+
+        <span class="n">old_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">if</span> <span class="n">old_parent</span> <span class="ow">is</span> <span class="n">target</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpd</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_at</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">allow_existing_pk</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">descendants</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_descendants</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">descendants</span><span class="p">:</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">tpd</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">insert_at</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">allow_existing_pk</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_rebuild_tree</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        mało sprytne, ale pewne :)</span>
+<span class="sd">        :param cls:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_tpm</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;level&#39;</span><span class="p">):</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">insert_at</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">allow_existing_pk</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_rebuild_qs</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">qs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Przebudowuje wszystkie ścieżki przechodzące przez qs, powolne,</span>
+<span class="sd">        używaj _rebuild_tree chyba że wiesz co robisz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">item_descendants</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">children</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">item</span><span class="p">))</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">children</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+                <span class="n">item_descendants</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="k">def</span> <span class="nf">item_ancestors</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">while</span> <span class="n">item</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">parent</span>
+
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">related_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">qs</span><span class="p">:</span>
+            <span class="c"># Get parents:</span>
+            <span class="n">related_nodes</span> <span class="o">=</span> <span class="n">related_nodes</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">item_ancestors</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+            <span class="n">related_nodes</span> <span class="o">=</span> <span class="n">related_nodes</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">item_descendants</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+
+        <span class="n">tpms</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_tpm</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">ancestor__in</span><span class="o">=</span><span class="n">related_nodes</span><span class="p">,</span>
+            <span class="n">descendant__in</span><span class="o">=</span><span class="n">related_nodes</span><span class="p">)</span>
+
+        <span class="n">tpms</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">related_nodes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">level</span><span class="p">):</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">insert_at</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">allow_existing_pk</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="CTTOrderableModel"><a class="viewcode-back" href="../../api.html#ctt.models.CTTOrderableModel">[docs]</a><span class="k">class</span> <span class="nc">CTTOrderableModel</span><span class="p">(</span><span class="n">CTTModel</span><span class="p">):</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+    <span class="n">_interval</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;order&#39;</span><span class="p">,)</span>
+
+<div class="viewcode-block" id="CTTOrderableModel.get_next_sibling"><a class="viewcode-back" href="../../api.html#ctt.models.CTTOrderableModel.get_next_sibling">[docs]</a>    <span class="k">def</span> <span class="nf">get_next_sibling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+        <span class="n">siblings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">**</span><span class="n">filters</span><span class="p">)</span>
+        <span class="n">ret_node</span> <span class="o">=</span> <span class="n">siblings</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">order__gt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ret_node</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">ret_node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="CTTOrderableModel.get_previous_sibling"><a class="viewcode-back" href="../../api.html#ctt.models.CTTOrderableModel.get_previous_sibling">[docs]</a>    <span class="k">def</span> <span class="nf">get_previous_sibling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+        <span class="n">siblings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">**</span><span class="n">filters</span><span class="p">)</span>
+        <span class="n">ret_node</span> <span class="o">=</span> <span class="n">siblings</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">order__lt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ret_node</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">ret_node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="CTTOrderableModel.get_children"><a class="viewcode-back" href="../../api.html#ctt.models.CTTOrderableModel.get_children">[docs]</a>    <span class="k">def</span> <span class="nf">get_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CTTOrderableModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_children</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;order&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CTTOrderableModel.get_siblings"><a class="viewcode-back" href="../../api.html#ctt.models.CTTOrderableModel.get_siblings">[docs]</a>    <span class="k">def</span> <span class="nf">get_siblings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CTTOrderableModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">(</span>
+            <span class="n">include_self</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;order&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CTTOrderableModel.save"><a class="viewcode-back" href="../../api.html#ctt.models.CTTOrderableModel.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_insert</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">force_update</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">using</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fix_order</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CTTOrderableModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">force_insert</span><span class="p">,</span> <span class="n">force_update</span><span class="p">,</span> <span class="n">using</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_push_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_pos</span><span class="p">):</span>
+        <span class="n">new_order</span> <span class="o">=</span> <span class="n">from_pos</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval</span>
+        <span class="n">siblings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">()</span>
+        <span class="n">to_push</span> <span class="o">=</span> <span class="n">siblings</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">order__gt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="n">order__lte</span><span class="o">=</span><span class="n">new_order</span><span class="p">)</span><span class="o">.</span>\
+        <span class="n">order_by</span><span class="p">(</span><span class="s">&#39;order&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">to_push</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">to_push</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_push_forward</span><span class="p">(</span><span class="n">new_order</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">new_order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CTTOrderableModel.move_before"><a class="viewcode-back" href="../../api.html#ctt.models.CTTOrderableModel.move_before">[docs]</a>    <span class="k">def</span> <span class="nf">move_before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sibling</span><span class="p">):</span>
+        <span class="n">before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">order__lt</span><span class="o">=</span><span class="n">sibling</span><span class="o">.</span><span class="n">order</span><span class="p">)</span><span class="o">.</span>\
+        <span class="n">order_by</span><span class="p">(</span><span class="s">&#39;-order&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">before</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">before</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">sibling</span><span class="o">.</span><span class="n">order</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval</span>
+</div>
+<div class="viewcode-block" id="CTTOrderableModel.move_after"><a class="viewcode-back" href="../../api.html#ctt.models.CTTOrderableModel.move_after">[docs]</a>    <span class="k">def</span> <span class="nf">move_after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sibling</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">sibling</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span>
+</div>
+    <span class="k">def</span> <span class="nf">_fix_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">max_order_sibling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;-order&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">max_order_sibling</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_order_conflicts</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_order_conflicts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">conflicts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_siblings</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">:</span>
+            <span class="n">conflicts</span> <span class="o">=</span> <span class="n">conflicts</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">conflicts</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">conflicts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_push_forward</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">django-ctt 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, HIDDENDATA.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
