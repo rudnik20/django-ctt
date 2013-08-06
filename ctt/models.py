@@ -117,6 +117,10 @@ class CTTModel(models.Model):
         return self.level
 
     def _get_next_from_qs(self, qs):
+        """ Return object after self in qs
+        :param qs: QuerySet of Nodes
+        :return: node object or None
+        """
         take = False
         for item in qs:
             if take:
@@ -207,7 +211,6 @@ class CTTModel(models.Model):
         if save:
             self.save()
 
-
     def is_ancestor_of(self, other, include_self=False):
         """Check is node ancestor of other node
 
@@ -231,7 +234,6 @@ class CTTModel(models.Model):
         """
         nodes = other.get_descendants(include_self=include_self)
         return self in nodes
-
 
     def is_leaf_node(self):
         """Return True if node is leaf"""
@@ -263,7 +265,7 @@ class CTTModel(models.Model):
         :param others: if True return target ancestors instead node ancestors
         :return: QuerySet of Nodes
         """
-        #        ancestors = self._cls.objects.filter(tpa__descendant_id=self.id)
+        #    ancestors = self._cls.objects.filter(tpa__descendant_id=self.id)
         if others:
             uni_ancestors = self._cls.objects.filter(
                 Q(tpa__descendant_id=target.id)
@@ -316,6 +318,7 @@ class CTTModel(models.Model):
         """
         Rebuid all paths cross qs, very slow, use _rebuild_tree only if you
         know what do you do
+        :param qs: QuerySet of Nodes
         """
 
         def item_descendants(item, result=None):
@@ -409,6 +412,9 @@ class CTTOrderableModel(CTTModel):
         super(CTTOrderableModel, self).save(force_insert, force_update, using)
 
     def _push_forward(self, from_pos):
+        """ Push forward node from position
+        :param from_pos: position from push
+        """
         new_order = from_pos + self._interval
         siblings = self.get_siblings()
         to_push = siblings.filter(order__gt=self.order, order__lte=new_order).\
@@ -420,7 +426,9 @@ class CTTOrderableModel(CTTModel):
         self.save()
 
     def move_before(self, sibling):
-        """ Move before sibling"""
+        """ Move before sibling
+        :param sibling: node which is sibling for self
+        """
         before = self.get_siblings().filter(order__lt=sibling.order).\
         order_by('-order')
         if before.exists():
@@ -429,10 +437,15 @@ class CTTOrderableModel(CTTModel):
             self.order = sibling.order - self._interval
 
     def move_after(self, sibling):
-        """Move after sibling"""
+        """Move after sibling
+        :param sibling: node which is sibling for self
+        """
         self.order = sibling.order + 1
 
     def _fix_order(self):
+        """ Add correct order to node
+        :return: None
+        """
         if not self.order:
             if self.get_siblings().exists():
                 max_order_sibling = self.get_siblings().order_by('-order')[0]
@@ -443,6 +456,9 @@ class CTTOrderableModel(CTTModel):
         self._check_order_conflicts()
 
     def _check_order_conflicts(self):
+        """ Find order conflicts and fix them
+        :return: None
+        """
         q = self.get_siblings()
         if self.pk:
             q = q.exclude(pk=self.pk)
