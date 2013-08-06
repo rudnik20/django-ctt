@@ -37,6 +37,7 @@ class CTTModel(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None):
         """Save data to database
+
         :return: None
         """
         is_new = self.pk is None
@@ -123,6 +124,7 @@ class CTTModel(models.Model):
 
     def _get_next_from_qs(self, qs):
         """ Return object after self in qs
+
         :param qs: QuerySet of Nodes
         :return: node object or None
         """
@@ -228,12 +230,14 @@ class CTTModel(models.Model):
 
     def is_child_node(self):
         """ Check is node child of other node
+
         :return: True or False
         """
         return not self.is_root_node()
 
     def is_descendant_of(self, other, include_self=False):
         """ Check is node descendant of other node
+
         :param other: supposed ancestor
         :param include_self:
         :return: True or False
@@ -243,6 +247,7 @@ class CTTModel(models.Model):
 
     def is_leaf_node(self):
         """Return True if node is leaf
+
         :return: True or False
         """
         return self._cls.objects.filter(
@@ -250,6 +255,7 @@ class CTTModel(models.Model):
 
     def is_root_node(self):
         """Return True if node is root
+
         :return: True or False
         """
         return self.level == 0
@@ -272,6 +278,7 @@ class CTTModel(models.Model):
         Return node ancestors unique compare with target ancestors.
         If others == True return target ancestors unique compare with node
         ancestors
+
         :param others: if True return target ancestors instead node ancestors
         :return: QuerySet of Nodes
         """
@@ -319,6 +326,7 @@ class CTTModel(models.Model):
     def _rebuild_tree(cls):
         """
         little clever but certain :)
+
         :return: None
         """
         cls._tpm.objects.all().delete()
@@ -330,6 +338,7 @@ class CTTModel(models.Model):
         """
         Rebuid all paths cross qs, very slow, use _rebuild_tree only if you
         know what do you do
+
         :param qs: QuerySet of Nodes
         :return: None
         """
@@ -424,6 +433,7 @@ class CTTOrderableModel(CTTModel):
 
     def save(self, force_insert=False, force_update=False, using=None):
         """Save data to database
+
         :return: None
         """
         self._fix_order()
@@ -431,6 +441,7 @@ class CTTOrderableModel(CTTModel):
 
     def _push_forward(self, from_pos):
         """ Push forward node from position
+
         :param from_pos: position from push
         :return: None
         """
@@ -446,6 +457,7 @@ class CTTOrderableModel(CTTModel):
 
     def move_before(self, sibling):
         """ Move before sibling
+
         :param sibling: node which is sibling for self
         :return: None
         """
@@ -458,6 +470,7 @@ class CTTOrderableModel(CTTModel):
 
     def move_after(self, sibling):
         """Move after sibling
+
         :param sibling: node which is sibling for self
         :return: None
         """
@@ -465,6 +478,7 @@ class CTTOrderableModel(CTTModel):
 
     def _fix_order(self):
         """ Add correct order to node
+
         :return: None
         """
         if not self.order:
@@ -478,6 +492,7 @@ class CTTOrderableModel(CTTModel):
 
     def _check_order_conflicts(self):
         """ Find order conflicts and fix them
+
         :return: None
         """
         q = self.get_siblings()
