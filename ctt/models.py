@@ -33,6 +33,7 @@ class CTTModel(models.Model):
         return unicode(self.id)
 
     def save(self, force_insert=False, force_update=False, using=None):
+        """Save data to database"""
         is_new = self.pk is None
         if not is_new:
             old_parent = self._cls.objects.get(pk=self.pk).parent
@@ -403,6 +404,7 @@ class CTTOrderableModel(CTTModel):
             include_self).order_by('order')
 
     def save(self, force_insert=False, force_update=False, using=None):
+        """Save data to database"""
         self._fix_order()
         super(CTTOrderableModel, self).save(force_insert, force_update, using)
 
