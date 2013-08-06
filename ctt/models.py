@@ -254,12 +254,14 @@ class CTTModel(models.Model):
         3._get_unique_ancestors(6) = 2
         3._get_unique_ancestors(6, True) = 5
 
-        ! include_target zadziała tylko dla others=True
-        ! include_self zadziała tylko dla others=False
+        include_target works only with others=True
+        include_self works only with others=False
 
-        pozniej to opisze jakos...
-        :param others:
-        :return:
+        Return node ancestors unique compare with target ancestors.
+        If others == True return target ancestors unique compare with node
+        ancestors
+        :param others: if True return target ancestors instead node ancestors
+        :return: QuerySet of Nodes
         """
         #        ancestors = self._cls.objects.filter(tpa__descendant_id=self.id)
         if others:
